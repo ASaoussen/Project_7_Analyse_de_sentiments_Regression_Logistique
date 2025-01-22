@@ -1,0 +1,12 @@
+# Ignorer les répertoires spécifiques
+/.pytest_cache
+/mlartifacts
+/mlruns
+/myenv
+/path_to_save_model
+
+
+#les fichiers
+.gitignore.txt
+.gitignore.bak.txt
+mlflow.db
