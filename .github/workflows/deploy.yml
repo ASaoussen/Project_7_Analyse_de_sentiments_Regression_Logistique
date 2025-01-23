@@ -1,25 +1,26 @@
-name: Deploy API to Azure
+name: Deploy API to Azure (Test on GitHub Actions)
 
 on:
   push:
     branches:
-      - main  # Déclencher le déploiement sur push vers la branche main
-  workflow_dispatch:  # Permet de lancer manuellement le workflow
+      - main  # Déclencher le workflow sur push vers la branche main
+  workflow_dispatch:  # Permet de lancer le workflow manuellement
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    # Utiliser un environnement Windows ou Ubuntu (adapté pour Python 3.12)
+    runs-on: windows-latest
 
     steps:
       # Étape 1 : Vérifier le code source
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Étape 2 : Configurer l'environnement Python (si nécessaire pour une API Python)
+      # Étape 2 : Configurer l'environnement Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.10
+          python-version: 3.12  # Version Python utilisée localement
 
       # Étape 3 : Installer les dépendances
       - name: Install dependencies
@@ -27,16 +28,18 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # Étape 4 : Connexion à Azure
-      - name: Login to Azure
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      # Étape 4 : Connexion à Azure (désactivée pour le moment)
+      # Cette étape nécessite un compte Azure et des secrets configurés.
+      # - name: Login to Azure
+      #   uses: azure/login@v1
+      #   with:
+      #     creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      # Étape 5 : Déployer sur Azure App Service
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: <your-app-service-name>  # Nom de votre Azure App Service
-          slot-name: production  # Utilisez un autre slot si nécessaire
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+      # Étape 5 : Déployer sur Azure Web App (désactivée pour le moment)
+      # Cette étape nécessite un App Service Azure et un secret pour le profil de publication.
+      # - name: Deploy to Azure Web App
+      #   uses: azure/webapps-deploy@v2
+      #   with:
+      #     app-name: <your-app-service-name>  # Nom de votre Azure App Service
+      #     slot-name: production  # Utilisez un autre slot si nécessaire
+      #     publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
