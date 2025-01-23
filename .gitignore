@@ -11,4 +11,4 @@
 .gitignore.txt
 .gitignore.bak.txt
 mlflow.db
-API_p7_Reglog.py.bak
+*.bak

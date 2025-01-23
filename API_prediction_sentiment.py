@@ -1,9 +1,13 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[ ]:
+
+
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import joblib
-import mlflow
 import uvicorn
-import mlflow.pyfunc
 import pandas as pd
 import nltk
 from nltk.corpus import stopwords
@@ -41,28 +45,13 @@ app = FastAPI()
 
 @app.get("/")
 async def read_root():
-    return {"message": "Bienvenue sur l'API Analyse de Sentiments!"}
+    return {"message": "Bienvenue sur l'API d'Analyse de Sentiments! Veuillez envoyer un texte pour prédire son sentiment."}
 
-# Chargement du modèle et du vectoriseur
+# Charger le pipeline complet (TF-IDF + Modèle) sauvegardé
 try:
-    # Définir l’URI de suivi MLflow
-    mlflow.set_tracking_uri('http://localhost:5001')
-
-    # Spécifier le chemin de l’artéfact
-    artifact_uri = 'mlflow-artifacts:/135230274734192630/312e0c08a9c9423783e82a3818656cb3/artifacts/LogisticRegression_lemmatized_model'
-
-    # Télécharger le modèle à un emplacement local
-    local_model_path = mlflow.artifacts.download_artifacts(artifact_uri=artifact_uri, dst_path='path_to_save_model')
-
-    # Charger le modèle depuis l’emplacement local
-    model = mlflow.pyfunc.load_model(local_model_path)
-
-    # Charger le vectoriseur
-    #vectorizer_path = r'C:\Users\attia\P7_Réalisez_une_analyse_de_sentiments_grâce_au_Deep_Learning\Project_7_Analyse_de_sentiments\tfidf_vectorizer_lemmatized.pkl'
-    vectorizer = joblib.load('tfidf_vectorizer_lemmatized.pkl')
-
+    pipeline = joblib.load('best_model.pkl')  # Pipeline avec TF-IDF et le modèle
 except Exception as e:
-    raise RuntimeError(f"Échec du chargement du modèle ou du vectoriseur : {str(e)}")
+    raise RuntimeError(f"Échec du chargement du pipeline : {str(e)}")
 
 # Définir le modèle de données d’entrée pour FastAPI
 class InputData(BaseModel):
@@ -79,14 +68,11 @@ async def predict(input_data: InputData):
 
         df = pd.DataFrame({'text': text_data})
 
-        # Prétraiter le texte avec nettoyage et lemmatisation
+        # Appliquer le nettoyage et la lemmatisation
         df['cleaned_text'] = df['text'].apply(preprocess_text)
 
-        # Transformer les textes nettoyés en utilisant le vectorizer
-        transformed_text = vectorizer.transform(df['cleaned_text'])
-
-        # Faire la prédiction
-        predictions = model.predict(transformed_text)
+        # Faire la prédiction directement avec le pipeline
+        predictions = pipeline.predict(df['cleaned_text'])
 
         # Retourner les prédictions sous forme de JSON
         return {"predictions": predictions.tolist()}
@@ -97,4 +83,11 @@ async def predict(input_data: InputData):
 # Lancer le serveur avec la commande suivante :
 # uvicorn script_name:app --reload
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8001)
+    uvicorn.run(app, host="0.0.0.0", port=8080)
+
+
+
+
+
+
+

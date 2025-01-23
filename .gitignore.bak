@@ -4,9 +4,11 @@
 /mlruns
 /myenv
 /path_to_save_model
+/__pycache__/
 
 
 #les fichiers
 .gitignore.txt
 .gitignore.bak.txt
 mlflow.db
+API_p7_Reglog.py.bak
