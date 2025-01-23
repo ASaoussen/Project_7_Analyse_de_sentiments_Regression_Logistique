@@ -1,11 +1,8 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[ ]:
-
-
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 import joblib
 import uvicorn
 import pandas as pd
@@ -57,37 +54,35 @@ except Exception as e:
 class InputData(BaseModel):
     text: str
 
+    # Validation pour s'assurer que 'text' est une chaîne de caractères non vide
+    @validator('text')
+    def check_text_non_empty(cls, v):
+        if not v or not isinstance(v, str):
+            raise ValueError("Le texte doit être une chaîne non vide.")
+        return v
+
 # Endpoint de prédiction
+
+        
 @app.post('/predict/')
 async def predict(input_data: InputData):
     try:
         # Extraire et prétraiter le texte
         text_data = input_data.text
-        if isinstance(text_data, str):
-            text_data = [text_data]
-
-        df = pd.DataFrame({'text': text_data})
-
-        # Appliquer le nettoyage et la lemmatisation
-        df['cleaned_text'] = df['text'].apply(preprocess_text)
+        
+        # Prétraiter le texte d'entrée
+        cleaned_text = preprocess_text(text_data)
 
         # Faire la prédiction directement avec le pipeline
-        predictions = pipeline.predict(df['cleaned_text'])
+        predictions = pipeline.predict([cleaned_text])
 
         # Retourner les prédictions sous forme de JSON
         return {"predictions": predictions.tolist()}
     
     except Exception as e:
+        print(f"Erreur lors de la prédiction : {str(e)}")  # Ajouter un log pour l'erreur
         raise HTTPException(status_code=500, detail=f"Erreur lors de la prédiction : {str(e)}")
-
 # Lancer le serveur avec la commande suivante :
 # uvicorn script_name:app --reload
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8080)
-
-
-
-
-
-
-
