@@ -42,7 +42,7 @@ jobs:
     - name: Run FastAPI app
       run: |
         .\myenv\Scripts\activate
-        start /B uvicorn script_name:app --host 0.0.0.0 --port 8001 --reload
+        start /B uvicorn script_name:app --host 0.0.0.0 --port 8080 --reload
 
     # Étape 5 : Lancer les tests unitaires immédiatement après le démarrage de l'API
     - name: Run FastAPI tests
