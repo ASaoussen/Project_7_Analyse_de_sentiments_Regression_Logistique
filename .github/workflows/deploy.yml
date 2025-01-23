@@ -1,4 +1,4 @@
-name: Deploy API to Azure (Test on GitHub Actions)
+name: Test API on Windows (GitHub Actions)
 
 on:
   push:
@@ -7,9 +7,8 @@ on:
   workflow_dispatch:  # Permet de lancer le workflow manuellement
 
 jobs:
-  deploy:
-    # Utiliser un environnement Windows ou Ubuntu (adapté pour Python 3.12)
-    runs-on: windows-latest
+  test:
+    runs-on: windows-latest  # Utiliser un environnement Windows
 
     steps:
       # Étape 1 : Vérifier le code source
@@ -20,7 +19,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.12  # Version Python utilisée localement
+          python-version: 3.12
 
       # Étape 3 : Installer les dépendances
       - name: Install dependencies
@@ -28,18 +27,31 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # Étape 4 : Connexion à Azure (désactivée pour le moment)
-      # Cette étape nécessite un compte Azure et des secrets configurés.
-      # - name: Login to Azure
-      #   uses: azure/login@v1
-      #   with:
-      #     creds: ${{ secrets.AZURE_CREDENTIALS }}
+      # Étape 4 : Lancer l'API en arrière-plan
+      - name: Start API
+        run: |
+          python -m app.main &  # Lancer l'API en arrière-plan
+        shell: cmd
+        timeout-minutes: 5  # Arrêter si l'API ne démarre pas dans les 5 minutes
 
-      # Étape 5 : Déployer sur Azure Web App (désactivée pour le moment)
-      # Cette étape nécessite un App Service Azure et un secret pour le profil de publication.
-      # - name: Deploy to Azure Web App
+      # Étape 5 : Ajouter un délai pour s'assurer que l'API est démarrée
+      - name: Wait for API to start
+        run: timeout /t 10  # Attendre 10 secondes pour que l'API démarre
+
+      # Étape 6 : Exécuter les tests unitaires
+      - name: Run Unit Tests
+        run: |
+          python -m unittest discover -s tests -p test_Api_LogReg_P7.py
+
+      # Étape 7 : Tester les endpoints de l'API avec des requêtes HTTP
+      - name: Test API Endpoints
+        run: |
+          python tests/test_api_with_requests.py
+
+      # Étape 8 : Déploiement Azure (commenté pour le moment)
+      # - name: Deploy to Azure
       #   uses: azure/webapps-deploy@v2
       #   with:
-      #     app-name: <your-app-service-name>  # Nom de votre Azure App Service
-      #     slot-name: production  # Utilisez un autre slot si nécessaire
+      #     app-name: "nom_de_ton_app_azure"
+      #     slot-name: "production"
       #     publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
