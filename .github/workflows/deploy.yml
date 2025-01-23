@@ -42,20 +42,15 @@ jobs:
     - name: Run FastAPI app
       run: |
         .\myenv\Scripts\activate
-        nohup uvicorn script_name:app --host 0.0.0.0 --port 8001 --reload &
+        start /B uvicorn script_name:app --host 0.0.0.0 --port 8001 --reload
 
-    # Étape 5 : Attendre que l'API démarre (ajoute un délai d'attente)
-    - name: Wait for FastAPI to start
-      run: |
-        timeout 10  # Attendre 10 secondes pour s'assurer que l'API est prête
-
-    # Étape 6 : Lancer les tests unitaires
+    # Étape 5 : Lancer les tests unitaires immédiatement après le démarrage de l'API
     - name: Run FastAPI tests
       run: |
         .\myenv\Scripts\activate
         pytest test_API_prediction_sentiment.py --disable-warnings
 
-    # Étape 7 : Lancer l'application Streamlit pour les tests manuels (optionnel)
+    # Étape 6 : Lancer l'application Streamlit pour les tests manuels (optionnel)
     - name: Run Streamlit app (optional for manual testing)
       run: |
         .\myenv\Scripts\activate
