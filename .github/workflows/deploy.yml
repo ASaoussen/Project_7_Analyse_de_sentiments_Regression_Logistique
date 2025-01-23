@@ -47,7 +47,7 @@ jobs:
         run: |
           set /a counter=0
           :wait_for_api
-          curl http://localhost:5001 || (
+          curl http://localhost:8001/health || (
             set /a counter+=1
             if %counter% geq 10 exit /b 1
             timeout /t 5
