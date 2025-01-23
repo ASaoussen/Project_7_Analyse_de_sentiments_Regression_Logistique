@@ -11,7 +11,7 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 import re
 
-# Définir le chemin vers nltk_data dans ton environnement virtuel
+# Définir le chemin vers nltk_data dans l'environnement virtuel
 virtual_env_path = r'C:\Users\attia\P7_Réalisez_une_analyse_de_sentiments_grâce_au_Deep_Learning\environnement\myenv'
 nltk_data_path = os.path.join(virtual_env_path, 'nltk_data')
 
