@@ -30,9 +30,8 @@ jobs:
       # Étape 4 : Lancer l'API en arrière-plan
       - name: Start API
         run: |
-          python -m app.main &  # Lancer l'API en arrière-plan
+          python API_p7_Reglog.py &  # Lancer l'API en arrière-plan
         shell: cmd
-        timeout-minutes: 5  # Arrêter si l'API ne démarre pas dans les 5 minutes
 
       # Étape 5 : Ajouter un délai pour s'assurer que l'API est démarrée
       - name: Wait for API to start
@@ -41,17 +40,9 @@ jobs:
       # Étape 6 : Exécuter les tests unitaires
       - name: Run Unit Tests
         run: |
-          python -m unittest discover -s tests -p test_Api_LogReg_P7.py
+          python -m unittest test_Api_LogReg_P7.py
 
       # Étape 7 : Tester les endpoints de l'API avec des requêtes HTTP
       - name: Test API Endpoints
         run: |
-          python tests/test_api_with_requests.py
-
-      # Étape 8 : Déploiement Azure (commenté pour le moment)
-      # - name: Deploy to Azure
-      #   uses: azure/webapps-deploy@v2
-      #   with:
-      #     app-name: "nom_de_ton_app_azure"
-      #     slot-name: "production"
-      #     publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          python test_api_with_requests.py
