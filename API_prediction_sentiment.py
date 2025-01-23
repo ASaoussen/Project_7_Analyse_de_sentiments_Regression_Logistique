@@ -11,20 +11,26 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 import re
 
-# Télécharger les ressources nécessaires de NLTK si ce n’est pas déjà fait
-nltk.download('wordnet')
-nltk.download('omw-1.4')
-nltk.download('stopwords')
-nltk.download('punkt')  # Pour tokenisation
+# Obtenir le chemin de l'environnement virtuel
+virtual_env_path = os.getenv('myenv')
 
-# Spécifier le chemin pour que NLTK télécharge les ressources dans ton environnement virtuel
-nltk_data_path = os.path.join(os.getenv('myenv'), 'nltk_data')  # Utiliser VIRTUAL_ENV pour le chemin
+if virtual_env_path is None:
+    # Si la variable d'environnement VIRTUAL_ENV n'est pas définie, utiliser un chemin par défaut
+    nltk_data_path = os.path.join(os.path.dirname(__file__), 'nltk_data')
+else:
+    nltk_data_path = os.path.join(virtual_env_path, 'nltk_data')
+
+# Créer le dossier s'il n'existe pas
 if not os.path.exists(nltk_data_path):
     os.makedirs(nltk_data_path)
 
+# Ajouter ce chemin au chemin de NLTK
 nltk.data.path.append(nltk_data_path)
 
-# Télécharger la ressource 'punkt'
+# Télécharger les ressources
+nltk.download('wordnet', download_dir=nltk_data_path)
+nltk.download('omw-1.4', download_dir=nltk_data_path)
+nltk.download('stopwords', download_dir=nltk_data_path)
 nltk.download('punkt', download_dir=nltk_data_path)
 
 # Initialiser le lemmatizer
