@@ -54,7 +54,8 @@ jobs:
 
     # Étape 6 : Lancer l'application Streamlit pour les tests manuels (optionnel)
     - name: Run Streamlit app (optional for manual testing)
-      run: |
-        .\myenv\Scripts\activate
-        streamlit run test_API_prediction_sentiment.py
-      continue-on-error: true
+      - name: Run Streamlit app
+  run: |
+    .\myenv\Scripts\activate
+    streamlit run streamlit_dashboard_P7.py
+
