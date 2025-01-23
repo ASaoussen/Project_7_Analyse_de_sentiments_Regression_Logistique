@@ -38,11 +38,11 @@ jobs:
       env:
         NLTK_DATA: ${{ runner.temp }}/nltk_data
 
-    # Étape 4 : Lancer l'API FastAPI
+    # Étape 4 : Lancer l'API FastAPI avec PowerShell sur le port 8080
     - name: Run FastAPI app
       run: |
         .\myenv\Scripts\activate
-        start /B uvicorn API_prediction_sentiment:app --host 0.0.0.0 --port 8080 --reload
+        Start-Process "uvicorn" -ArgumentList "API_prediction_sentiment:app --host 0.0.0.0 --port 8080 --reload"
 
     # Étape 5 : Lancer les tests unitaires immédiatement après le démarrage de l'API
     - name: Run FastAPI tests
