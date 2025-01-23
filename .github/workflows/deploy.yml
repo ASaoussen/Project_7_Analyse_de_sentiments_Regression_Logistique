@@ -43,6 +43,7 @@ jobs:
 
       # Étape 6 : Attendre que l'API soit prête
       - name: Wait for API to start
+        shell: cmd
         run: |
           set /a counter=0
           :wait_for_api
