@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+import os
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, validator
 import joblib
 import uvicorn
-import pandas as pd
 import nltk
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
@@ -16,6 +16,16 @@ nltk.download('wordnet')
 nltk.download('omw-1.4')
 nltk.download('stopwords')
 nltk.download('punkt')  # Pour tokenisation
+
+# Spécifier le chemin pour que NLTK télécharge les ressources dans ton environnement virtuel
+nltk_data_path = os.path.join(os.getenv('myenv'), 'nltk_data')  # Utiliser VIRTUAL_ENV pour le chemin
+if not os.path.exists(nltk_data_path):
+    os.makedirs(nltk_data_path)
+
+nltk.data.path.append(nltk_data_path)
+
+# Télécharger la ressource 'punkt'
+nltk.download('punkt', download_dir=nltk_data_path)
 
 # Initialiser le lemmatizer
 lemmatizer = WordNetLemmatizer()
@@ -62,8 +72,6 @@ class InputData(BaseModel):
         return v
 
 # Endpoint de prédiction
-
-        
 @app.post('/predict/')
 async def predict(input_data: InputData):
     try:
@@ -82,6 +90,7 @@ async def predict(input_data: InputData):
     except Exception as e:
         print(f"Erreur lors de la prédiction : {str(e)}")  # Ajouter un log pour l'erreur
         raise HTTPException(status_code=500, detail=f"Erreur lors de la prédiction : {str(e)}")
+
 # Lancer le serveur avec la commande suivante :
 # uvicorn script_name:app --reload
 if __name__ == "__main__":
