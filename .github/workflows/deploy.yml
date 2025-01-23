@@ -46,16 +46,22 @@ jobs:
       env:
         NLTK_DATA: ${{ runner.temp }}/nltk_data
 
-    # Étape 5 : Lancer les tests unitaires immédiatement après le démarrage de l'API
+    # Étape 5 : Lancer les tests unitaires pour l'API
     - name: Run FastAPI tests
       run: |
         .\myenv\Scripts\activate
         pytest test_API_prediction_sentiment.py --disable-warnings
 
-    # Étape 6 : Lancer l'application Streamlit pour les tests manuels (optionnel)
-    - name: Run Streamlit app (optional for manual testing)
-      - name: Run Streamlit app
-  run: |
-    .\myenv\Scripts\activate
-    streamlit run streamlit_dashboard_P7.py
+    # Étape 6 : Lancer l'application Streamlit
+    - name: Run Streamlit app
+      run: |
+        .\myenv\Scripts\activate
+        streamlit run streamlit_dashboard_P7.py --server.port=8502 &
+      env:
+        STREAMLIT_SERVER_PORT: 8502
 
+    # Étape 7 : Tester si l'application Streamlit est accessible
+    - name: Test Streamlit app
+      run: |
+        sleep 10  # Attendre quelques secondes pour s'assurer que l'application démarre
+        curl -f http://localhost:8502
