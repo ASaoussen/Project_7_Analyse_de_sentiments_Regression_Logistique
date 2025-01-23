@@ -38,6 +38,7 @@ jobs:
       env:
         NLTK_DATA: ${{ runner.temp }}/nltk_data
 
+
     # Étape 4 : Lancer l'API FastAPI avec PowerShell sur le port 8080
     - name: Run FastAPI app
       run: |
