@@ -11,24 +11,23 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 import re
 
-# Définir le chemin vers nltk_data dans l'environnement virtuel
-virtual_env_path = r'C:\Users\attia\P7_Réalisez_une_analyse_de_sentiments_grâce_au_Deep_Learning\environnement\myenv'
-nltk_data_path = os.path.join(virtual_env_path, 'nltk_data')
+# Définir le chemin vers `nltk_data` dans l'environnement virtuel
+VIRTUAL_ENV_PATH = r'C:\Users\attia\P7_Réalisez_une_analyse_de_sentiments_grâce_au_Deep_Learning\environnement\myenv'
+NLTK_DATA_PATH = os.path.join(VIRTUAL_ENV_PATH, 'nltk_data')
 
 # Créer le dossier s'il n'existe pas
-if not os.path.exists(nltk_data_path):
-    os.makedirs(nltk_data_path)
+os.makedirs(NLTK_DATA_PATH, exist_ok=True)
 
 # Ajouter ce chemin aux chemins de recherche de NLTK
-nltk.data.path.append(nltk_data_path)
+nltk.data.path.append(NLTK_DATA_PATH)
 
 # Télécharger les ressources nécessaires si elles ne sont pas déjà disponibles
-resources = ['wordnet', 'omw-1.4', 'stopwords', 'punkt']
-for resource in resources:
+RESOURCES = ['wordnet', 'omw-1.4', 'stopwords', 'punkt']
+for resource in RESOURCES:
     try:
         nltk.data.find(f"corpora/{resource}")
     except LookupError:
-        nltk.download(resource, download_dir=nltk_data_path)
+        nltk.download(resource, download_dir=NLTK_DATA_PATH)
 
 # Initialiser le lemmatizer
 lemmatizer = WordNetLemmatizer()
