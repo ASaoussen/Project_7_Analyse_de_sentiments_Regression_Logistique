@@ -21,28 +21,46 @@ jobs:
         with:
           python-version: 3.12
 
-      # Étape 3 : Installer les dépendances
+      # Étape 3 : Créer un environnement virtuel
+      - name: Set up Virtual Environment
+        run: |
+          python -m venv myenv
+          myenv\Scripts\activate
+
+      # Étape 4 : Installer les dépendances
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
+          myenv\Scripts\activate
+          pip install --upgrade pip
           pip install -r requirements.txt
 
-      # Étape 4 : Lancer l'API en arrière-plan
+      # Étape 5 : Lancer l'API en arrière-plan
       - name: Start API
         run: |
-          python API_p7_Reglog.py &  # Lancer l'API en arrière-plan
+          myenv\Scripts\activate
+          start python API_p7_Reglog.py
         shell: cmd
 
-      # Étape 5 : Ajouter un délai pour s'assurer que l'API est démarrée
+      # Étape 6 : Attendre que l'API soit prête
       - name: Wait for API to start
-        run: timeout /t 10  # Attendre 10 secondes pour que l'API démarre
+        run: |
+          set /a counter=0
+          :wait_for_api
+          curl http://localhost:5001 || (
+            set /a counter+=1
+            if %counter% geq 10 exit /b 1
+            timeout /t 5
+            goto wait_for_api
+          )
 
-      # Étape 6 : Exécuter les tests unitaires
+      # Étape 7 : Exécuter les tests unitaires
       - name: Run Unit Tests
         run: |
+          myenv\Scripts\activate
           python -m unittest test_Api_LogReg_P7.py
 
-      # Étape 7 : Tester les endpoints de l'API avec des requêtes HTTP
+      # Étape 8 : Tester les endpoints de l'API avec des requêtes HTTP
       - name: Test API Endpoints
         run: |
+          myenv\Scripts\activate
           python test_api_with_requests.py
