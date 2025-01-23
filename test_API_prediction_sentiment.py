@@ -6,7 +6,7 @@ client = TestClient(app)
 def test_read_root():
     response = client.get("/")
     assert response.status_code == 200
-    assert response.json() == {"message": "Bienvenue sur l'API d'Analyse de Sentiments! Veuillez envoyer un texte pour prédire son sentiment."}
+    assert response.json() == {"message": "Bienvenue sur l'API d'Analyse de Sentiments!."}
 
 def test_predict_positive_sentiment():
     response = client.post(
