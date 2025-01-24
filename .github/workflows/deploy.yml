@@ -47,10 +47,11 @@ jobs:
         NLTK_DATA: ${{ runner.temp }}/nltk_data
 
     # Étape 5 : Lancer l'API FastAPI
-    - name: Run FastAPI app
+    - name: Run FastAPI app in the background
       run: |
         myenv\Scripts\activate
-        start /b uvicorn API_prediction_sentiment:app --host 127.0.0.1 --port 8080 --reload
+        uvicorn API_prediction_sentiment:app --host 127.0.0.1 --port 8080 --reload &
+      shell: cmd
       env:
         NLTK_DATA: ${{ runner.temp }}/nltk_data
 
