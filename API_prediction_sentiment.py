@@ -10,10 +10,14 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 import re
+from pathlib import Path
 
-# Définir le chemin vers `nltk_data` dans l'environnement virtuel
-VIRTUAL_ENV_PATH = r'C:\Users\attia\P7_Réalisez_une_analyse_de_sentiments_grâce_au_Deep_Learning\environnement\myenv'
-NLTK_DATA_PATH = os.path.join(VIRTUAL_ENV_PATH, 'nltk_data')
+# Détection du chemin où télécharger les ressources NLTK
+if "CI" in os.environ:  # Si le script tourne dans GitHub Actions
+    NLTK_DATA_PATH = str(Path.home() / "nltk_data")
+else:  # Si le script tourne en local
+    VIRTUAL_ENV_PATH = r'C:\Users\attia\P7_Réalisez_une_analyse_de_sentiments_grâce_au_Deep_Learning\environnement\myenv'
+    NLTK_DATA_PATH = os.path.join(VIRTUAL_ENV_PATH, 'nltk_data')
 
 # Créer le dossier s'il n'existe pas
 os.makedirs(NLTK_DATA_PATH, exist_ok=True)
@@ -21,7 +25,7 @@ os.makedirs(NLTK_DATA_PATH, exist_ok=True)
 # Ajouter ce chemin aux chemins de recherche de NLTK
 nltk.data.path.append(NLTK_DATA_PATH)
 
-# Télécharger les ressources nécessaires si elles ne sont pas déjà disponibles
+# Télécharger les ressources nécessaires
 RESOURCES = ['wordnet', 'omw-1.4', 'stopwords', 'punkt']
 for resource in RESOURCES:
     try:
@@ -97,7 +101,13 @@ async def predict(input_data: InputData):
         
         # Faire une prédiction avec le pipeline chargé
         predictions = pipeline.predict([cleaned_text])
-        return {"predictions": predictions.tolist()}
+        prediction_label = int(predictions[0])
+        sentiment = "Positive" if prediction_label == 1 else "Negative"
+        
+        return {
+            "prediction": prediction_label,
+            "sentiment": sentiment
+        }
     
     except Exception as e:
         # Ajouter un log en cas d'erreur
