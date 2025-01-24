@@ -5,7 +5,7 @@ on:
     branches:
       - main
   pull_request:
-    branches:   
+    branches:
       - main
 
 jobs:
@@ -40,11 +40,11 @@ jobs:
         env:
           NLTK_DATA: ${{ runner.temp }}\nltk_data
 
-      # Étape 5 : Lancer l'API FastAPI dans un processus distinct (en arrière-plan)
-      - name: Run FastAPI app
+      # Étape 5 : Lancer l'API FastAPI dans un processus distinct
+      - name: Run FastAPI app in the background
         shell: cmd
         run: |
-          myenv\Scripts\activate && python -m uvicorn API_prediction_sentiment:app --host 127.0.0.1 --port 8080 --log-level debug &
+          myenv\Scripts\activate && python run_api.py
         env:
           NLTK_DATA: ${{ runner.temp }}\nltk_data
 
