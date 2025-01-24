@@ -25,40 +25,38 @@ jobs:
 
       # Étape 3 : Création de l'environnement virtuel et installation des dépendances
       - name: Set up virtual environment and install dependencies
+        shell: cmd
         run: |
           python -m venv myenv
-          myenv\Scripts\activate
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          myenv\Scripts\activate && python -m pip install --upgrade pip && pip install -r requirements.txt
         env:
-          NLTK_DATA: ${{ runner.temp }}/nltk_data
+          NLTK_DATA: ${{ runner.temp }}\nltk_data
 
       # Étape 4 : Télécharger les données NLTK
       - name: Download NLTK Data
+        shell: cmd
         run: |
-          myenv\Scripts\activate
-          python -c "import nltk, os; \
+          myenv\Scripts\activate && python -c "import nltk, os; \
                      nltk.data.path.append(os.environ['NLTK_DATA']); \
                      nltk.download('punkt', download_dir=os.environ['NLTK_DATA']); \
                      nltk.download('wordnet', download_dir=os.environ['NLTK_DATA']); \
                      nltk.download('omw-1.4', download_dir=os.environ['NLTK_DATA']); \
                      nltk.download('stopwords', download_dir=os.environ['NLTK_DATA'])"
         env:
-          NLTK_DATA: ${{ runner.temp }}/nltk_data
+          NLTK_DATA: ${{ runner.temp }}\nltk_data
 
       # Étape 5 : Lancer l'API FastAPI dans un processus distinct
       - name: Run FastAPI app in the background
+        shell: cmd
         run: |
-          myenv\Scripts\activate
-          python -m uvicorn API_prediction_sentiment:app --host 127.0.0.1 --port 8080 --log-level debug &
-        shell: bash
+          myenv\Scripts\activate && python -m uvicorn API_prediction_sentiment:app --host 127.0.0.1 --port 8080 --log-level debug
         env:
-          NLTK_DATA: ${{ runner.temp }}/nltk_data
+          NLTK_DATA: ${{ runner.temp }}\nltk_data
 
       # Étape 6 : Lancer les tests unitaires pour vérifier l'API
       - name: Run API unit tests
+        shell: cmd
         run: |
-          myenv\Scripts\activate
-          pytest test_API_prediction_sentiment.py --disable-warnings
+          myenv\Scripts\activate && pytest test_API_prediction_sentiment.py --disable-warnings
         env:
-          NLTK_DATA: ${{ runner.temp }}/nltk_data
+          NLTK_DATA: ${{ runner.temp }}\nltk_data
