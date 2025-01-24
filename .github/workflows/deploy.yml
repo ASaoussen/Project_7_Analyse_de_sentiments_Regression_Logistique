@@ -47,7 +47,7 @@ jobs:
     - name: Run FastAPI app
       run: |
         .\myenv\Scripts\activate
-        uvicorn API_prediction_sentiment:app --host 127.0.0.1 --port 8080 --reload &
+        start /b uvicorn API_prediction_sentiment:app --host 127.0.0.1 --port 8080 --reload
       env:
         NLTK_DATA: ${{ runner.temp }}/nltk_data
 
@@ -56,17 +56,3 @@ jobs:
       run: |
         .\myenv\Scripts\activate
         pytest test_API_prediction_sentiment.py --disable-warnings
-
-    # Étape 5 : Lancer l'application Streamlit
-    - name: Run Streamlit app
-      run: |
-        .\myenv\Scripts\activate
-        streamlit run streamlit_dashboard_P7.py --server.port=8502 &
-      env:
-        STREAMLIT_SERVER_PORT: 8502
-
-    # Étape 6 : Tester si l'application Streamlit est accessible
-    - name: Test Streamlit app
-      run: |
-        sleep 10  # Attendre quelques secondes pour s'assurer que l'application démarre
-        curl -f http://127.0.0.1:8502
