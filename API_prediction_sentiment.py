@@ -32,6 +32,10 @@ for resource in RESOURCES:
         print(f"Téléchargement du package NLTK : {resource}")
         nltk.download(resource, download_dir=NLTK_DATA_PATH)
 
+# Vérifier explicitement si 'punkt' est disponible et le télécharger si nécessaire
+if not nltk.data.find('tokenizers/punkt'):
+    nltk.download('punkt', download_dir=NLTK_DATA_PATH)
+
 # Initialisation du lemmatiseur et des stopwords
 lemmatizer = WordNetLemmatizer()
 stop_words = set(stopwords.words('english'))
