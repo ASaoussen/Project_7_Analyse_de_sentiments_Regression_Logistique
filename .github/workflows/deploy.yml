@@ -55,3 +55,9 @@ jobs:
           myenv\Scripts\activate && pytest test_API_prediction_sentiment.py --disable-warnings
         env:
           NLTK_DATA: ${{ runner.temp }}\nltk_data
+
+      # Étape 7 : Terminer le processus uvicorn après les tests
+      - name: Kill uvicorn process
+        shell: cmd
+        run: |
+          taskkill /F /IM uvicorn.exe
