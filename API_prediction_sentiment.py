@@ -22,10 +22,11 @@ else:  # Si en local
 os.makedirs(NLTK_DATA_PATH, exist_ok=True)
 nltk.data.path.append(NLTK_DATA_PATH)
 
-# Télécharger les ressources NLTK si nécessaire
+# Télécharger les ressources NLTK nécessaires (si elles ne sont pas présentes)
 RESOURCES = ['wordnet', 'omw-1.4', 'stopwords', 'punkt']
 for resource in RESOURCES:
     try:
+        # Vérifie si la ressource est présente, sinon la télécharge
         nltk.data.find(f"tokenizers/{resource}" if resource == 'punkt' else f"corpora/{resource}")
     except LookupError:
         print(f"Téléchargement du package NLTK : {resource}")
@@ -35,17 +36,17 @@ for resource in RESOURCES:
 lemmatizer = WordNetLemmatizer()
 stop_words = set(stopwords.words('english'))
 
-# Fonction pour nettoyer le texte
+# Fonction pour nettoyer le texte en supprimant la ponctuation et les chiffres
 def clean_text(text):
     """
-    Nettoie le texte en supprimant la ponctuation, les chiffres et en mettant en minuscule.
+    Nettoie le texte en supprimant la ponctuation, les chiffres et en mettant tout en minuscule.
     """
     text = text.lower()
     text = re.sub(r'[^\w\s]', '', text)  # Supprimer la ponctuation
     text = re.sub(r'\d+', '', text)  # Supprimer les chiffres
     return text
 
-# Fonction pour prétraiter le texte
+# Fonction pour prétraiter le texte (nettoyage, tokenisation et lemmatisation)
 def preprocess_text(text):
     """
     Prétraite le texte en le nettoyant, le tokenisant et en appliquant la lemmatisation.
@@ -61,17 +62,17 @@ app = FastAPI()
 @app.get("/")
 async def read_root():
     """
-    Endpoint racine pour vérifier que l'API est opérationnelle.
+    Endpoint racine pour vérifier que l'API fonctionne.
     """
     return {"message": "Bienvenue sur l'API d'Analyse de Sentiments!"}
 
-# Chargement du pipeline (TF-IDF + Modèle) sauvegardé
+# Chargement du pipeline (modèle sauvegardé avec joblib)
 try:
     pipeline = joblib.load('best_model.pkl')
 except Exception as e:
     raise RuntimeError(f"Échec du chargement du pipeline : {str(e)}")
 
-# Modèle de données pour les prédictions
+# Modèle de données pour les prédictions via Pydantic
 class InputData(BaseModel):
     text: str
 
@@ -87,12 +88,11 @@ class InputData(BaseModel):
 @app.post('/predict/')
 async def predict(input_data: InputData):
     """
-    Endpoint pour effectuer une prédiction basée sur un texte fourni.
+    Endpoint pour effectuer une prédiction de sentiment à partir d'un texte fourni.
     """
     try:
         # Prétraitement du texte
-        text_data = input_data.text
-        cleaned_text = preprocess_text(text_data)
+        cleaned_text = preprocess_text(input_data.text)
 
         # Prédiction avec le modèle chargé
         predictions = pipeline.predict([cleaned_text])
@@ -108,7 +108,7 @@ async def predict(input_data: InputData):
         print(f"Erreur lors de la prédiction : {str(e)}")
         raise HTTPException(status_code=500, detail=f"Erreur lors de la prédiction : {str(e)}")
 
-# Point d'entrée principal
+# Point d'entrée principal pour lancer l'application
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8080)
