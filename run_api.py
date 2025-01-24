@@ -3,7 +3,6 @@
 
 # In[ ]:
 
-
 import subprocess
 import time
 
@@ -14,13 +13,8 @@ subprocess.Popen(["uvicorn", "API_prediction_sentiment:app", "--host", "127.0.0.
 time.sleep(5)  # attendre 5 secondes pour donner à l'API le temps de démarrer
 
 
-# In[ ]:
 
-
-get_ipython().system('jupyter nbconvert --to script run_api.ipynb')
-
-
-# In[ ]:
+#
 
 
 
