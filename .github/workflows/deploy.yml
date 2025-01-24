@@ -36,12 +36,7 @@ jobs:
       - name: Download NLTK Data
         shell: cmd
         run: |
-          myenv\Scripts\activate && python -c "import nltk, os; \
-                     nltk.data.path.append(os.environ['NLTK_DATA']); \
-                     nltk.download('punkt', download_dir=os.environ['NLTK_DATA']); \
-                     nltk.download('wordnet', download_dir=os.environ['NLTK_DATA']); \
-                     nltk.download('omw-1.4', download_dir=os.environ['NLTK_DATA']); \
-                     nltk.download('stopwords', download_dir=os.environ['NLTK_DATA'])"
+          myenv\Scripts\activate && python -c "import nltk, os; nltk.data.path.append(os.environ['NLTK_DATA']); nltk.download('punkt', download_dir=os.environ['NLTK_DATA']); nltk.download('wordnet', download_dir=os.environ['NLTK_DATA']); nltk.download('omw-1.4', download_dir=os.environ['NLTK_DATA']); nltk.download('stopwords', download_dir=os.environ['NLTK_DATA'])"
         env:
           NLTK_DATA: ${{ runner.temp }}\nltk_data
 
