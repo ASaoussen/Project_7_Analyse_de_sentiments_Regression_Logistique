@@ -13,50 +13,51 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    # Étape 1 : Check-out du dépôt
-    - name: Check out repository
-      uses: actions/checkout@v3
+      # Étape 1 : Check-out du dépôt
+      - name: Check out repository
+        uses: actions/checkout@v3
 
-    # Étape 2 : Configuration de Python
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.12"
+      # Étape 2 : Configuration de Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
 
-    # Étape 3 : Configuration de l'environnement virtuel et installation des dépendances
-    - name: Set up virtual environment and install dependencies
-      run: |
-        python -m venv myenv
-        myenv\Scripts\activate
-        pip install --upgrade pip
-        pip install -r requirements.txt
-      env:
-        NLTK_DATA: ${{ runner.temp }}/nltk_data
+      # Étape 3 : Configuration de l'environnement virtuel et installation des dépendances
+      - name: Set up virtual environment and install dependencies
+        run: |
+          python -m venv myenv
+          myenv\Scripts\activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
+        env:
+          NLTK_DATA: ${{ runner.temp }}/nltk_data
 
-    # Étape 4 : Télécharger les données NLTK
-    -name: Download NLTK Data
-  run: |
-    myenv\Scripts\activate
-    python -c "import nltk, os; \
-               nltk.data.path.append(os.environ['NLTK_DATA']); \
-               nltk.download('punkt'); \
-               nltk.download('wordnet'); \
-               nltk.download('omw-1.4'); \
-               nltk.download('stopwords'); \
-               nltk.download('tokenizers/punkt_tab/english')"
-  env:
-    NLTK_DATA: ${{ runner.temp }}/nltk_data
-    # Étape 5 : Lancer l'API FastAPI
-- name: Run FastAPI app in the background
-  run: |
-    myenv\Scripts\activate
-    uvicorn API_prediction_sentiment:app --host 127.0.0.1 --port 8080 --reload &
-  shell: cmd
-  env:
-    NLTK_DATA: ${{ runner.temp }}/nltk_data
+      # Étape 4 : Télécharger les données NLTK
+      - name: Download NLTK Data
+        run: |
+          myenv\Scripts\activate
+          python -c "import nltk, os; \
+                     nltk.data.path.append(os.environ['NLTK_DATA']); \
+                     nltk.download('punkt'); \
+                     nltk.download('wordnet'); \
+                     nltk.download('omw-1.4'); \
+                     nltk.download('stopwords'); \
+                     nltk.download('tokenizers/punkt_tab/english')"
+        env:
+          NLTK_DATA: ${{ runner.temp }}/nltk_data
 
-    # Étape 6 : Lancer les tests unitaires pour vérifier l'API
-    - name: Run API unit tests
-      run: |
-        myenv\Scripts\activate
-        pytest test_API_prediction_sentiment.py --disable-warnings
+      # Étape 5 : Lancer l'API FastAPI
+      - name: Run FastAPI app in the background
+        run: |
+          myenv\Scripts\activate
+          uvicorn API_prediction_sentiment:app --host 127.0.0.1 --port 8080 --reload &
+        shell: cmd
+        env:
+          NLTK_DATA: ${{ runner.temp }}/nltk_data
+
+      # Étape 6 : Lancer les tests unitaires pour vérifier l'API
+      - name: Run API unit tests
+        run: |
+          myenv\Scripts\activate
+          pytest test_API_prediction_sentiment.py --disable-warnings
