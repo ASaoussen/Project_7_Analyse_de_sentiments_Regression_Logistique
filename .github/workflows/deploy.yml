@@ -35,10 +35,11 @@ jobs:
     - name: Download NLTK Data
       run: |
         .\myenv\Scripts\activate
-        python -c "import nltk; nltk.download('punkt', download_dir='${{ runner.temp }}/nltk_data'); \
-                   nltk.download('wordnet', download_dir='${{ runner.temp }}/nltk_data'); \
-                   nltk.download('omw-1.4', download_dir='${{ runner.temp }}/nltk_data'); \
-                   nltk.download('stopwords', download_dir='${{ runner.temp }}/nltk_data')"
+        python -c "import nltk; \
+                   nltk.download('punkt', download_dir='${{ runner.temp.replace('\\', '/') }}/nltk_data'); \
+                   nltk.download('wordnet', download_dir='${{ runner.temp.replace('\\', '/') }}/nltk_data'); \
+                   nltk.download('omw-1.4', download_dir='${{ runner.temp.replace('\\', '/') }}/nltk_data'); \
+                   nltk.download('stopwords', download_dir='${{ runner.temp.replace('\\', '/') }}/nltk_data')"
       env:
         NLTK_DATA: ${{ runner.temp }}/nltk_data
 
