@@ -45,9 +45,6 @@ def clean_text(text):
     text = re.sub(r'\d+', '', text)  # Supprimer les chiffres
     return text
 
-
-
-
 # Fonction pour prétraiter le texte
 def preprocess_text(text):
     """

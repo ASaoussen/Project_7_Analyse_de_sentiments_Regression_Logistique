@@ -39,19 +39,19 @@ jobs:
           myenv\Scripts\activate
           python -c "import nltk, os; \
                      nltk.data.path.append(os.environ['NLTK_DATA']); \
-                     nltk.download('punkt'); \
-                     nltk.download('wordnet'); \
-                     nltk.download('omw-1.4'); \
-                     nltk.download('stopwords')"
+                     nltk.download('punkt', download_dir=os.environ['NLTK_DATA']); \
+                     nltk.download('wordnet', download_dir=os.environ['NLTK_DATA']); \
+                     nltk.download('omw-1.4', download_dir=os.environ['NLTK_DATA']); \
+                     nltk.download('stopwords', download_dir=os.environ['NLTK_DATA'])"
         env:
           NLTK_DATA: ${{ runner.temp }}/nltk_data
 
-      # Étape 5 : Lancer l'API FastAPI
+      # Étape 5 : Lancer l'API FastAPI dans un processus distinct
       - name: Run FastAPI app in the background
         run: |
           myenv\Scripts\activate
-          uvicorn API_prediction_sentiment:app --host 127.0.0.1 --port 8080 --log-level debug &
-        shell: cmd
+          python -m uvicorn API_prediction_sentiment:app --host 127.0.0.1 --port 8080 --log-level debug &
+        shell: bash
         env:
           NLTK_DATA: ${{ runner.temp }}/nltk_data
 
@@ -60,3 +60,5 @@ jobs:
         run: |
           myenv\Scripts\activate
           pytest test_API_prediction_sentiment.py --disable-warnings
+        env:
+          NLTK_DATA: ${{ runner.temp }}/nltk_data
