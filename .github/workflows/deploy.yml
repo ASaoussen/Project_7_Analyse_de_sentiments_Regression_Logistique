@@ -23,12 +23,12 @@ jobs:
         with:
           python-version: "3.12"
 
-      # Étape 3 : Configuration de l'environnement virtuel et installation des dépendances
+      # Étape 3 : Création de l'environnement virtuel et installation des dépendances
       - name: Set up virtual environment and install dependencies
         run: |
           python -m venv myenv
           myenv\Scripts\activate
-          pip install --upgrade pip
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
         env:
           NLTK_DATA: ${{ runner.temp }}/nltk_data
@@ -42,8 +42,7 @@ jobs:
                      nltk.download('punkt'); \
                      nltk.download('wordnet'); \
                      nltk.download('omw-1.4'); \
-                     nltk.download('stopwords'); \
-                     nltk.download('tokenizers/punkt_tab/english')"
+                     nltk.download('stopwords')"
         env:
           NLTK_DATA: ${{ runner.temp }}/nltk_data
 
@@ -51,7 +50,7 @@ jobs:
       - name: Run FastAPI app in the background
         run: |
           myenv\Scripts\activate
-          uvicorn API_prediction_sentiment:app --host 127.0.0.1 --port 8080 --reload &
+          uvicorn API_prediction_sentiment:app --host 127.0.0.1 --port 8080 --log-level debug &
         shell: cmd
         env:
           NLTK_DATA: ${{ runner.temp }}/nltk_data
