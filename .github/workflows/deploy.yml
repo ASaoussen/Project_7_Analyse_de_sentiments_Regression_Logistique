@@ -62,10 +62,10 @@ jobs:
         #  myenv\Scripts\activate && pytest test_API_prediction_sentiment.py --disable-warnings
 
       # Étape 8 : Terminer le processus uvicorn après les tests
-      - name: Kill uvicorn process
-        shell: cmd
-        run: |
-          taskkill /F /IM uvicorn.exe
+      #- name: Kill uvicorn process
+      #  shell: cmd
+      #  run: |
+      #    taskkill /F /IM uvicorn.exe
 
   deploy:
     runs-on: ubuntu-latest
