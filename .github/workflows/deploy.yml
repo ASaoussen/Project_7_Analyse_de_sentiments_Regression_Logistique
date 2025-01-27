@@ -51,10 +51,10 @@ jobs:
           myenv\Scripts\activate && python -c "import nltk; nltk.download('punkt'); nltk.download('wordnet'); nltk.download('omw-1.4'); nltk.download('stopwords')"
 
       # Étape 6 : Lancer l'API FastAPI dans un processus distinct avec Uvicorn
-      - name: Run FastAPI app in the background
-        shell: cmd
-        run: |
-          myenv\Scripts\activate && uvicorn run_api:app --host 0.0.0.0 --port 8000 --reload
+      #- name: Run FastAPI app in the background
+      #  shell: cmd
+      #  run: |
+      #    myenv\Scripts\activate && uvicorn run_api:app --host 0.0.0.0 --port 8000 --reload
 
   deploy:
     runs-on: ubuntu-latest
