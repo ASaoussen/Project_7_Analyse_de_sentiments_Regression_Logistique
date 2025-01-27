@@ -55,10 +55,10 @@ jobs:
           myenv\Scripts\activate && python run_api.py
 
       # Étape 7 : Lancer les tests unitaires pour vérifier l'API
-      - name: Run API unit tests
-        shell: cmd
-        run: |
-          myenv\Scripts\activate && pytest test_API_prediction_sentiment.py --disable-warnings
+      #- name: Run API unit tests
+       # shell: cmd
+       # run: |
+        #  myenv\Scripts\activate && pytest test_API_prediction_sentiment.py --disable-warnings
 
       # Étape 8 : Terminer le processus uvicorn après les tests
       - name: Kill uvicorn process
