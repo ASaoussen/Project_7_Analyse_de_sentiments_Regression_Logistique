@@ -41,7 +41,8 @@ jobs:
         shell: cmd
         run: |
           python -m venv myenv
-          myenv\Scripts\activate && python -m pip install --upgrade pip && pip install -r requirements.txt
+          myenv\Scripts\pip install --upgrade pip
+          myenv\Scripts\pip install -r requirements.txt
 
       # Étape 5 : Télécharger les données NLTK
       - name: Download NLTK Data
@@ -49,23 +50,11 @@ jobs:
         run: |
           myenv\Scripts\activate && python -c "import nltk; nltk.download('punkt'); nltk.download('wordnet'); nltk.download('omw-1.4'); nltk.download('stopwords')"
 
-      # Étape 6 : Lancer l'API FastAPI dans un processus distinct
+      # Étape 6 : Lancer l'API FastAPI dans un processus distinct avec Uvicorn
       - name: Run FastAPI app in the background
         shell: cmd
         run: |
-          myenv\Scripts\activate && python run_api.py
-
-      # Étape 7 : Lancer les tests unitaires pour vérifier l'API
-      #- name: Run API unit tests
-       # shell: cmd
-       # run: |
-        #  myenv\Scripts\activate && pytest test_API_prediction_sentiment.py --disable-warnings
-
-      # Étape 8 : Terminer le processus uvicorn après les tests
-      #- name: Kill uvicorn process
-      #  shell: cmd
-      #  run: |
-      #    taskkill /F /IM uvicorn.exe
+          myenv\Scripts\activate && uvicorn run_api:app --host 0.0.0.0 --port 8000 --reload
 
   deploy:
     runs-on: ubuntu-latest
@@ -80,9 +69,7 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v1
         with:
-          #creds: ${{ secrets.AZURE_CREDENTIALS }}
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          #client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
