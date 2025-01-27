@@ -1,7 +1,3 @@
-# This workflow will build and push a Python application to an Azure Web App when a commit is pushed to your default branch.
-# This workflow assumes you have already created the target Azure App Service web app.
-
-
 name: Build and deploy Python app to Azure Web App
 
 env:
@@ -20,7 +16,7 @@ jobs:
   build:
     runs-on: windows-latest
 
-   steps:
+    steps:
       # Étape 1 : Check-out du dépôt
       - name: Check out repository
         uses: actions/checkout@v3
@@ -29,7 +25,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: env.PYTHON_VERSION
+          python-version: ${{ env.PYTHON_VERSION }}
 
       # Étape 3 : Vider le cache Python
       - name: Clear Python cache
@@ -70,7 +66,6 @@ jobs:
         run: |
           taskkill /F /IM uvicorn.exe
 
-   
   deploy:
     permissions:
       contents: none
