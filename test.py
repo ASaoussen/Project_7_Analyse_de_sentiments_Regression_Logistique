@@ -1,5 +1,5 @@
 from fastapi.testclient import TestClient
-from API_prediction_sentiment import app  # nom de votre fichier Python contenant l'application FastAPI
+from app import app  # nom de votre fichier Python contenant l'application FastAPI
 
 client = TestClient(app)
 
