@@ -92,6 +92,6 @@ async def predict(input_data: InputData):
         raise HTTPException(status_code=500, detail="Erreur interne du serveur.")
 
 # Code pour démarrer l'API via Uvicorn (si nécessaire)
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+#if __name__ == "__main__":
+#    import uvicorn
+#    uvicorn.run(app, host="0.0.0.0", port=8000)
