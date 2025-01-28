@@ -6,6 +6,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, field_validator
 import joblib
 import nltk
+import uvicorn
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 
