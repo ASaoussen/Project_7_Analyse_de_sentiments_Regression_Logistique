@@ -104,6 +104,6 @@ async def predict(input_data: InputData):
         raise HTTPException(status_code=500, detail=f"Erreur lors de la prédiction : {str(e)}")
 
 # Code pour démarrer l'API
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8080)
+#if __name__ == "__main__":
+#    import uvicorn
+#    uvicorn.run(app, host="0.0.0.0", port=8080)
