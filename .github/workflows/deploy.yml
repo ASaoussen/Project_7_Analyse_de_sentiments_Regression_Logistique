@@ -44,17 +44,11 @@ jobs:
           myenv\Scripts\pip install --upgrade pip
           myenv\Scripts\pip install -r requirements.txt
 
-      # Étape 5 : Télécharger les données NLTK
-      - name: Download NLTK Data
-        shell: cmd
-        run: |
-          myenv\Scripts\activate && python -c "import nltk; nltk.download('punkt'); nltk.download('wordnet'); nltk.download('omw-1.4'); nltk.download('stopwords')"
-
-      # Étape 6 : Lancer l'API FastAPI dans un processus distinct avec Uvicorn
-      #- name: Run FastAPI app in the background
-      #  shell: cmd
-      #  run: |
-      #    myenv\Scripts\activate && uvicorn app:app --host 0.0.0.0 --port 8000 --reload
+      # Étape 5 : (Optionnelle) Si vous ne voulez pas télécharger NLTK à chaque déploiement, vous pouvez commenter cette étape
+      # - name: Download NLTK Data
+      #   shell: cmd
+      #   run: |
+      #     myenv\Scripts\activate && python -c "import nltk; nltk.download('punkt'); nltk.download('wordnet'); nltk.download('omw-1.4'); nltk.download('stopwords')"
 
   deploy:
     runs-on: ubuntu-latest
@@ -80,4 +74,3 @@ jobs:
           app-name: ${{ env.AZURE_WEBAPP_NAME }} # Remplace par le nom de ton application Azure
           slot-name: "production"
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-
