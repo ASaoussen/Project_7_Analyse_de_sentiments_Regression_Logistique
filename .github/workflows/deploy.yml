@@ -1,12 +1,12 @@
-name: Build and deploy Python app to Azure Web App
+name: Build and Deploy Python App to Azure Web App
 
 env:
-  AZURE_WEBAPP_NAME: streamlitsentimentsapp                # set this to the name of your Azure Web App
-  PYTHON_VERSION: '3.12'                               # set this to the Python version to use
+  AZURE_WEBAPP_NAME: streamlitsentimentsapp  # Azure Web App name
+  PYTHON_VERSION: '3.12'                    # Python version
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   workflow_dispatch:
 
 permissions:
@@ -18,60 +18,50 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      # Étape 1 : Check-out du dépôt
-      - name: Check out repository
-        uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      # Étape 2 : Configuration de Python
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v3
         with:
           python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
 
-      # Étape 3 : Vider le cache Python
-      - name: Clear Python cache
-        shell: cmd
-        run: |
-          if exist __pycache__ rmdir /S /Q __pycache__
-          for /D %%d in (myenv) do if exist %%d (rmdir /S /Q %%d)
-          echo "Cache cleared."
-
-      # Étape 4 : Création de l'environnement virtuel et installation des dépendances
-      - name: Set up virtual environment and install dependencies
-        shell: cmd
+      - name: Create and activate virtual environment
         run: |
           python -m venv myenv
-          myenv\Scripts\pip install --upgrade pip
-          myenv\Scripts\pip install -r requirements.txt
+          myenv\Scripts\activate
 
-      # Étape 5 : (Optionnelle) Si vous ne voulez pas télécharger NLTK à chaque déploiement, vous pouvez commenter cette étape
-      # - name: Download NLTK Data
-      #   shell: cmd
-      #   run: |
-      #     myenv\Scripts\activate && python -c "import nltk; nltk.download('punkt'); nltk.download('wordnet'); nltk.download('omw-1.4'); nltk.download('stopwords')"
+      - name: Install dependencies
+        run: pip install -r requirements.txt  
+
+      - name: Upload artifact for deployment
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-app
+          path: |
+            .
+            !venv/
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
 
     steps:
-      # Étape 1 : Check-out du dépôt
-      - name: Check out repository
-        uses: actions/checkout@v3
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: python-app
+          path: .
 
-      # Étape 2 : Connexion à Azure
       - name: Login to Azure
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-          #client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          #tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          #subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      # Étape 3 : Déployer l'API sur Azure Web App
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }} # Remplace par le nom de ton application Azure
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
           slot-name: "production"
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
